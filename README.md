@@ -7,55 +7,90 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
+# Backend API - Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Backend API ini dibangun menggunakan [Laravel](https://laravel.com), framework PHP yang powerful dan mudah digunakan.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Prasyarat
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP >= 8.1
+- Composer
+- MySQL/MariaDB
+- Node.js & npm (untuk asset frontend jika diperlukan)
 
-## Learning Laravel
+## Setup & Instalasi
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. **Clone repository**
+   ```sh
+   git clone <repo-url>
+   cd backend-api
+   ```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+2. **Install dependency PHP**
+   ```sh
+   composer install
+   ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+3. **Copy file environment**
+   ```sh
+   cp .env.example .env
+   ```
 
-## Laravel Sponsors
+4. **Generate APP_KEY**
+   ```sh
+   php artisan key:generate
+   ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+5. **Setup Database**
+   - Buat database baru di MySQL, misal: `pmi-database`
+   - Edit file `.env` sesuai konfigurasi database Anda:
+     ```
+     DB_CONNECTION=mysql
+     DB_HOST=127.0.0.1
+     DB_PORT=3306
+     DB_DATABASE=pmi-database
+     DB_USERNAME=root
+     DB_PASSWORD=password
+     ```
 
-### Premium Partners
+6. **Jalankan migrasi**
+   ```sh
+   php artisan migrate
+   ```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+7. **Jalankan seeder**
+   ```sh
+   php artisan db:seed --class=UserSeeder
+   ```
 
-## Contributing
+8. **Jalankan aplikasi**
+   ```sh
+   php artisan serve
+   ```
+   Aplikasi akan berjalan di [http://localhost:8000](http://localhost:8000)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Running Command
 
-## Code of Conduct
+- **Migrasi database**
+  ```sh
+  php artisan migrate
+  ```
+- **Menjalankan seeder**
+  ```sh
+  php artisan db:seed --class=UserSeeder
+  ```
+- **Menjalankan aplikasi**
+  ```sh
+  php artisan serve
+  ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Struktur Folder
 
-## Security Vulnerabilities
+- `app/Models/User.php` - Model User
+- `database/migrations/` - File migrasi database
+- `database/seeders/UserSeeder.php` - Seeder data user
+- `database/factories/UserFactory.php` - Factory user untuk seeder
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Lisensi
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Proyek ini menggunakan [MIT license](https://opensource.org/licenses/MIT).
