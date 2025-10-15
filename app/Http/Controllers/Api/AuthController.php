@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Helpers\ResponseHelper;
 
 class AuthController extends Controller
 {
@@ -22,20 +23,18 @@ class AuthController extends Controller
 
         // Validasi password
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Email atau password salah'
-            ], 401);
+            return ResponseHelper::error('Invalid email or password', 401);
         }
 
         // Generate token
         $token = JWTAuth::fromUser($user);
         $ttl = config('jwt.ttl') * 60; // detik
 
-        return response()->json([
-            'status' => true,
-            'accessToken' => $token,
-            'exp' => $ttl,
-        ]);
+
+        return ResponseHelper::success([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => $ttl
+        ], 'Token generated successfully');
     }
 }

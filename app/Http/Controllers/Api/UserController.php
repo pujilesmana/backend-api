@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -13,11 +14,12 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = User::all();
-        return response()->json([
-            'success' => true,
-            'data' => $users
-        ]);
+        try {
+            $users = User::all();
+            return ResponseHelper::success($users, 'Data pengguna berhasil diambil');
+        } catch (\Exception $e) {
+            return ResponseHelper::error($e, 'Terjadi kesalahan saat mengambil data pengguna');
+        }
     }
 
     public function show($id)
@@ -25,17 +27,11 @@ class UserController extends Controller
         $user = User::find($id);
 
         if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User tidak ditemukan'
-            ], 404);
+            return ResponseHelper::error('User tidak ditemukan');
         }
 
-        return response()->json([
-            'success' => true,
-            'data' => $user
-        ]);
-    }
+        return ResponseHelper::success($user);
+     }
 
     public function store(Request $request)
     {
@@ -51,11 +47,7 @@ class UserController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'User berhasil dibuat',
-            'data'    => $user
-        ], 201);
+        return ResponseHelper::success($user, 'User berhasil dibuat', 201);
     }
 
     public function update(Request $request, $id)
@@ -63,10 +55,7 @@ class UserController extends Controller
         $user = User::find($id);
 
         if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User tidak ditemukan'
-            ], 404);
+            return ResponseHelper::error('User tidak ditemukan');
         }
 
         $validated = $request->validate([
@@ -81,11 +70,7 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'User berhasil diupdate',
-            'data'    => $user
-        ]);
+        return ResponseHelper::success($user, 'User berhasil diupdate');
     }
 
     public function destroy($id)
@@ -93,10 +78,7 @@ class UserController extends Controller
         $user = User::find($id);
 
         if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User tidak ditemukan'
-            ], 404);
+            return ResponseHelper::error('User tidak ditemukan');
         }
 
         $user->delete();
@@ -112,16 +94,11 @@ class UserController extends Controller
         $user = DB::select('SELECT * FROM users WHERE id = ?', [$id]);
 
         if (empty($user)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User tidak ditemukan (raw query)'
-            ], 404);
+            return ResponseHelper::error('User tidak ditemukan (raw query)');
         }
 
-        return response()->json([
-            'success' => true,
+        return ResponseHelper::success($user[0], 'Data pengguna berhasil diambil', 200, [
             'method' => 'raw SQL',
-            'data' => $user[0],
         ]);
     }
 }
