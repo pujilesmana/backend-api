@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -15,9 +16,12 @@ class UserController extends Controller
     public function index()
     {
         try {
+            Log::info('Fetching all users');
             $users = User::all();
+            Log::info('Fetched all users successfully : ' . $users);
             return ResponseHelper::success($users, 'Data pengguna berhasil diambil');
         } catch (\Exception $e) {
+            Log::error('Error fetching users: ' . $e->getMessage());
             return ResponseHelper::error($e, 'Terjadi kesalahan saat mengambil data pengguna');
         }
     }
@@ -25,8 +29,9 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::find($id);
-
+        Log::info('Fetching user with ID: ' . $id);
         if (!$user) {
+            Log::warning('User not found with ID: ' . $id);
             return ResponseHelper::error('User tidak ditemukan');
         }
 
@@ -41,11 +46,15 @@ class UserController extends Controller
             'password' => 'required|min:6',
         ]);
 
+        Log::info('Creating user: ' . $validated['name']);
+
         $user = User::create([
             'name'     => $validated['name'],
             'email'    => $validated['email'],
             'password' => Hash::make($validated['password']),
         ]);
+
+        Log::info('User created successfully: ' . $user);
 
         return ResponseHelper::success($user, 'User berhasil dibuat', 201);
     }
@@ -55,6 +64,7 @@ class UserController extends Controller
         $user = User::find($id);
 
         if (!$user) {
+            Log::warning('User not found with ID: ' . $id);
             return ResponseHelper::error('User tidak ditemukan');
         }
 
@@ -64,11 +74,15 @@ class UserController extends Controller
             'password' => 'sometimes|min:6',
         ]);
 
+        Log::info('Updating user with ID: ' . $id);
+
         if (isset($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
         }
 
         $user->update($validated);
+
+        Log::info('User updated successfully: ' . $user);
 
         return ResponseHelper::success($user, 'User berhasil diupdate');
     }
@@ -78,10 +92,13 @@ class UserController extends Controller
         $user = User::find($id);
 
         if (!$user) {
+            Log::warning('User not found with ID: ' . $id);
             return ResponseHelper::error('User tidak ditemukan');
         }
 
         $user->delete();
+
+        Log::info('User deleted successfully: ' . $user);
 
         return response()->json([
             'success' => true,
@@ -94,8 +111,11 @@ class UserController extends Controller
         $user = DB::select('SELECT * FROM users WHERE id = ?', [$id]);
 
         if (empty($user)) {
+            Log::warning('User not found with ID: ' . $id);
             return ResponseHelper::error('User tidak ditemukan (raw query)');
         }
+
+        Log::info('Fetched user successfully (raw query): ' . $user[0]);
 
         return ResponseHelper::success($user[0], 'Data pengguna berhasil diambil', 200, [
             'method' => 'raw SQL',
