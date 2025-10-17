@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Helpers\ResponseHelper;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -21,6 +22,7 @@ class AuthController extends Controller
         // Cari user
         $user = User::where('email', $credentials['email'])->first();
 
+        Log::info("Attempting user login: " . $credentials['email']);
         // Validasi password
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
             return ResponseHelper::error('Invalid email or password', 401);
