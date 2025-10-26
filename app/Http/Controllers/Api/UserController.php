@@ -36,7 +36,7 @@ class UserController extends Controller
         }
 
         return ResponseHelper::success($user);
-     }
+    }
 
     public function store(Request $request)
     {
